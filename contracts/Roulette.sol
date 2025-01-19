@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
+import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBase.sol";
 
 contract SecureRoulette is VRFConsumerBase {
     struct Bet {
         address player;
         uint amount;
-        uint8 number; // Zahl zwischen 0-36
+        uint8 number; // Number between 0-36
     }
 
     Bet[] public bets;
@@ -36,16 +36,16 @@ contract SecureRoulette is VRFConsumerBase {
     {
         owner = msg.sender;
         gameActive = true;
-        keyHash = 0xAA77729D3466CA35AE8D28B7EC64358D9A79289A0A32EC1CF7F8ACB9F5A9E134; // KeyHash für Chainlink
-        fee = 0.1 * 10 ** 18; // LINK-Gebühr
+        keyHash = 0xAA77729D3466CA35AE8D28B7EC64358D9A79289A0A32EC1CF7F8ACB9F5A9E134; // KeyHash for Chainlink
+        fee = 0.1 * 10 ** 18; // LINK fee
     }
 
-    // Spieler platziert Einsatz
+    // Player places a bet
     function placeBet(uint8 _number) public payable {
-        require(gameActive, "Das Spiel ist nicht aktiv.");
-        require(msg.value >= minBet && msg.value <= maxBet, "Einsatz liegt nicht im erlaubten Bereich.");
-        require(_number <= 36, "Zahl muss zwischen 0 und 36 liegen.");
-        require(bets.length < maxPlayers, "Maximale Spieleranzahl erreicht.");
+        require(gameActive, "The game is not active.");
+        require(msg.value >= minBet && msg.value <= maxBet, "Bet is out of allowed range.");
+        require(_number <= 36, "Number must be between 0 and 36.");
+        require(bets.length < maxPlayers, "Maximum player count reached.");
 
         bets.push(Bet(msg.sender, msg.value, _number));
         totalBetAmount += msg.value;
@@ -53,68 +53,68 @@ contract SecureRoulette is VRFConsumerBase {
         emit BetPlaced(msg.sender, msg.value, _number);
     }
 
-    // Startet das Spiel und fordert eine Zufallszahl an
+    // Starts the game and requests a random number
     function startGame() public onlyOwner {
-        require(gameActive, "Das Spiel ist nicht aktiv.");
-        require(bets.length > 0, "Keine Einsätze vorhanden.");
-        require(LINK.balanceOf(address(this)) >= fee, "Nicht genügend LINK für Zufallszahl.");
+        require(gameActive, "The game is not active.");
+        require(bets.length > 0, "No bets placed.");
+        require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK for randomness.");
 
-        gameActive = false; // Deaktiviert das Spiel bis zur Ziehung
+        gameActive = false; // Deactivates the game until the draw
         emit GameStarted();
         requestRandomness(keyHash, fee);
     }
 
-    // Verarbeitet die Zufallszahl und ermittelt den Gewinner
+    // Processes the random number and determines the winner
     function fulfillRandomness(bytes32, uint256 randomness) internal override {
-        winningNumber = uint8(randomness % 37); // Zahl zwischen 0-36
+        winningNumber = uint8(randomness % 37); // Number between 0-36
         emit GameEnded(winningNumber);
         distributePayouts(winningNumber);
     }
 
-    // Auszahlung an die Gewinner
+    // Distributes payouts to the winners
     function distributePayouts(uint8 _winningNumber) internal {
         uint payoutAmount = 0;
 
         for (uint i = 0; i < bets.length; i++) {
             if (bets[i].number == _winningNumber) {
-                payoutAmount = bets[i].amount * 36; // 36-facher Gewinn
+                payoutAmount = bets[i].amount * 36; // 36x payout
                 address winner = bets[i].player;
 
-                // Auszahlung durchführen
+                // Perform payout
                 (bool success, ) = winner.call{value: payoutAmount}("");
-                require(success, "Auszahlung fehlgeschlagen.");
+                require(success, "Payout failed.");
 
                 emit Payout(winner, payoutAmount);
             }
         }
 
-        // Rücksetzen des Spiels
+        // Reset the game
         delete bets;
         totalBetAmount = 0;
-        gameActive = true; // Spiel wieder aktivieren
+        gameActive = true; // Reactivate the game
     }
 
-    // Beendet das Spiel und zahlt verbleibendes Guthaben an den Besitzer aus
+    // Ends the game and transfers remaining balance to the owner
     function endGame() public onlyOwner {
-        require(!gameActive, "Spiel muss beendet sein.");
+        require(!gameActive, "Game must be ended.");
         gameActive = false;
 
-        // Auszahlung des gesamten Vertragsguthabens an den Besitzer
+        // Transfer the entire contract balance to the owner
         payable(owner).transfer(address(this).balance);
     }
 
-    // Modifikator für den Besitzer
+    // Modifier for the owner
     modifier onlyOwner() {
-        require(msg.sender == owner, "Nur der Besitzer kann diese Funktion ausführen.");
+        require(msg.sender == owner, "Only the owner can execute this function.");
         _;
     }
 
-    // Erlaubt Einzahlung von LINK-Token
+    // Allows deposit of LINK tokens
     function fundLINK() public payable onlyOwner {
-        require(msg.value > 0, "Es muss ein Betrag eingezahlt werden.");
+        require(msg.value > 0, "A deposit must be made.");
     }
 
-    // Rückgabefunktion für Ether
+    // Fallback function for receiving Ether
     receive() external payable {
         totalBetAmount += msg.value;
     }

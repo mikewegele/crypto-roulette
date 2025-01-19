@@ -1,0 +1,23 @@
+[
+  {
+    "inputs": [{"internalType": "uint8","name": "_number","type": "uint8"}],
+    "name": "placeBet",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "startGame",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "winningNumber",
+    "outputs": [{"internalType": "uint8","name":"","type": "uint8"}],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

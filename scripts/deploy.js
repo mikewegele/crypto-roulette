@@ -1,11 +1,15 @@
 async function main() {
-    const Roulette = await ethers.getContractFactory("Roulette");
-    const roulette = await Roulette.deploy();
-    await roulette.deployed();
-    console.log("Contract deployed to:", roulette.address);
+    const [deployer] = await ethers.getSigners();
+    console.log("Deploying contracts with the account:", deployer.address);
+
+    const Contract = await ethers.getContractFactory("SecureRoulette");  // Ensure the contract name here is correct
+    const contract = await Contract.deploy();
+    console.log("Contract deployed to:", contract.address);
 }
 
-main().catch((error) => {
-    console.error(error);
-    process.exit(1);
-});
+main()
+    .then(() => process.exit(0))
+    .catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });
