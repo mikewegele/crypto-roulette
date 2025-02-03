@@ -145,6 +145,41 @@
       "artifacts": [
         "VRFRequestIDBase"
       ]
+    },
+    "/Users/mikewegele/source/fu/crypto/crypto copy v2/contracts/MyContract.sol": {
+      "lastModificationDate": 1738589164735,
+      "contentHash": "8e4ce08291c995eb1703754b12e8e306",
+      "sourceName": "contracts/MyContract.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "MyContract"
+      ]
     }
   }
 }
