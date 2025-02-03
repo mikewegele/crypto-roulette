@@ -18,6 +18,9 @@ contract MyContract {
     uint256 public winningNumber;
     bool public gameActive;
 
+    // Stores the history of balances before and after payout
+    mapping(address => uint256[]) public balanceHistory; // Maps user addresses to a history of balances
+
     event BetPlaced(address indexed player, string betType, uint256 amount);
     event WinnerDeclared(uint256 winningNumber);
     event Payout(address indexed player, uint256 amount);
@@ -76,6 +79,10 @@ contract MyContract {
         return ready;
     }
 
+    function getWinningNumber() public view returns (uint256){
+        return winningNumber;
+    }
+
     function generateWinningNumber() private {
         require(users.length > 1, "Not enough players");
         winningNumber = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 37;
@@ -86,11 +93,22 @@ contract MyContract {
 
     function distributeWinnings() private {
         for (uint256 i = 0; i < bets.length; i++) {
+            address player = bets[i].player;
+
+            // Record the old balance before payout
+            uint256 oldBalance = balances[player];
+            balanceHistory[player].push(oldBalance);
+
             if (isWinningBet(bets[i])) {
                 uint256 payout = bets[i].amount * 2;
-                payable(bets[i].player).transfer(payout);
-                emit Payout(bets[i].player, payout);
+                balances[player] += payout; // Update the balance
+                payable(player).transfer(payout);
+                emit Payout(player, payout);
             }
+
+            // Record the new balance after payout
+            uint256 newBalance = balances[player];
+            balanceHistory[player].push(newBalance);
         }
         delete bets;
         delete ready;
@@ -118,5 +136,10 @@ contract MyContract {
             return true;
         }
         return false;
+    }
+
+    // Add a function to retrieve a player's balance history
+    function getBalanceHistory(address _player) public view returns (uint256[] memory) {
+        return balanceHistory[_player];
     }
 }

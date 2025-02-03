@@ -231,7 +231,6 @@ const BettingSection = ({nickname, addBet, ready}) => {
     if (contract) { 
 
       try {
-
         const current = await contract.methods.addBet(formatDate(Date.now()), nickname, selectedBetType.id, String(betValue), String(betAmount)).send({ from: window.ethereum.selectedAddress, value: new Web3(window.ethereum).utils.toWei("0.01", "ether") });
 
         if(current.blockHash){
