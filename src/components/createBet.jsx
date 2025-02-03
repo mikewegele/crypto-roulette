@@ -4,6 +4,7 @@ import { getContractInstance } from '../contract/web3'
 
 import { Plus, X, Hash, LayoutGrid, Circle, ChevronUp, Square } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import Web3 from "web3";
 
 const Modal = ({ children, onClose }) => {
   return createPortal(
@@ -231,7 +232,7 @@ const BettingSection = ({nickname, addBet, ready}) => {
 
       try {
 
-        const current = await contract.methods.addBet(formatDate(Date.now()), nickname, selectedBetType.id, String(betValue), String(betAmount)).send({ from: window.ethereum.selectedAddress });
+        const current = await contract.methods.addBet(formatDate(Date.now()), nickname, selectedBetType.id, String(betValue), String(betAmount)).send({ from: window.ethereum.selectedAddress, value: new Web3(window.ethereum).utils.toWei("0.01", "ether") });
 
         if(current.blockHash){
           addBet({ id:selectedBetType.id, betAmount, betValue, createdAt: formatDate(Date.now()), nickname})

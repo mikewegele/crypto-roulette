@@ -25,6 +25,8 @@ const LoginPage = () => {
     e.preventDefault();
 
     const contract = await getContractInstance();
+
+    console.log(contract)
         
     if (contract) {
       try {
@@ -40,7 +42,6 @@ const LoginPage = () => {
           } else {
             newNickname = name ;
           }
-
               
           const current = await contract.methods.register(newNickname).send({ from: window.ethereum.selectedAddress });
     

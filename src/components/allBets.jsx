@@ -3,6 +3,8 @@ import { Clock } from 'lucide-react';
 
 const BetHistoryTable = ({ bets }) => {
 
+  console.log("HERE")
+
 
   return (
     <div className="p-6">
