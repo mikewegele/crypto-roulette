@@ -3,9 +3,6 @@ import { Clock } from 'lucide-react';
 
 const BetHistoryTable = ({ bets }) => {
 
-  console.log("HERE")
-
-
   return (
     <div className="p-6">
       <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6">
@@ -43,11 +40,11 @@ const BetHistoryTable = ({ bets }) => {
                     {bet.id}
                   </td>
                   <td className="py-4 px-4 text-sm text-gray-300">
-                    {bet.betValue}
+                    {bet.betValue.toString()}
                   </td>
                   <td className="py-4 px-4 text-sm text-right">
                     <span className="font-medium text-white">
-                      ${bet.betAmount}
+                      ${bet.betAmount.toString()}
                     </span>
                   </td>
                 </tr>
