@@ -55,7 +55,6 @@ const HomePage = () => {
                         // Load balance history (old and new)
                         const playerAddress = window.ethereum.selectedAddress;
                         const balanceHistoryData = await contract.methods.getBalanceHistory(playerAddress).call();
-                        console.log(balanceHistoryData)
                         const oldBalance = balanceHistoryData[0].toString() || 0; // Default to 0 if no history
                         const newBalance = balanceHistoryData[balanceHistoryData.length - 1].toString() || oldBalance; // Default to last balance if no new balance
                         setBalanceHistory({ oldBalance, newBalance });
@@ -191,10 +190,7 @@ const HomePage = () => {
             {showDialog && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-gray-800 rounded-xl p-8 w-96">
-                        <h3 className="text-2xl font-bold text-white mb-4">Winning Number</h3>
-                        <p className="text-white">Winning Number: {winningNumber}</p>
-                        <p className="text-white mt-4">Old Balance: {balanceHistory.oldBalance}</p>
-                        <p className="text-white">New Balance: {balanceHistory.newBalance}</p>
+                        <h3 className="text-2xl font-bold text-white mb-4">Winning Number: {winningNumber}</h3>
                         <button
                             className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg"
                             onClick={() => setShowDialog(false)}

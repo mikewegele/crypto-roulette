@@ -9,11 +9,9 @@ const getContractInstance = async () => {
 
     await window.ethereum.request({ method: 'eth_requestAccounts' }); // Request account access
     const networkId = await web3.eth.net.getId();  //Get network ID
-    console.log(networkId)
     const deployedNetwork = HelloWorldArtifact.networks[networkId]; //Use network ID to get correct deployment
 
 
-    console.log(networkId)
 
     if (deployedNetwork) {
       const contract = new web3.eth.Contract(

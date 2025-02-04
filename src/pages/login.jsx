@@ -26,8 +26,6 @@ const LoginPage = () => {
 
     const contract = await getContractInstance();
 
-    console.log(contract)
-        
     if (contract) {
       try {
 

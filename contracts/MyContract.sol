@@ -55,11 +55,12 @@ contract MyContract {
         string memory _time,
         string memory _nickname,
         string memory _bet,
-        uint256 _value
+        uint256 _value,
+        uint256 _amount
     ) public payable {
         require(msg.value > 0, "Must bet some Ether");
-        bets.push(Bet(_time, _nickname, _bet, _value, msg.value, msg.sender));
-        balances[msg.sender] += msg.value;
+        bets.push(Bet(_time, _nickname, _bet, _value, _amount, msg.sender));
+        balances[msg.sender] += _amount;
         emit BetPlaced(msg.sender, _bet, msg.value);
     }
 
@@ -101,7 +102,7 @@ contract MyContract {
 
             if (isWinningBet(bets[i])) {
                 uint256 payout = bets[i].amount * 2;
-                balances[player] += payout; // Update the balance
+                balances[player] += payout;
                 payable(player).transfer(payout);
                 emit Payout(player, payout);
             }
