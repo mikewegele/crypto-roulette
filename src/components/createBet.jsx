@@ -231,7 +231,15 @@ const BettingSection = ({nickname, addBet, ready}) => {
     if (contract) { 
 
       try {
-        const current = await contract.methods.addBet(formatDate(Date.now()), nickname, selectedBetType.id, String(betValue), String(betAmount)).send({ from: window.ethereum.selectedAddress, value: new Web3(window.ethereum).utils.toWei("0.01", "ether") });
+          console.log(selectedBetType)
+          const numericValue = ['pair', 'rouge'].includes(selectedBetType.id) ? 32 : ['black', 'noir'].includes(selectedBetType.id) ? 31 : betValue;
+          const current = await contract.methods.addBet(
+              formatDate(Date.now()),
+              nickname,
+              selectedBetType.id,
+              String(numericValue),
+              String(betAmount)
+          ).send({ from: window.ethereum.selectedAddress, value: new Web3(window.ethereum).utils.toWei(betAmount, "ether") });
 
         if(current.blockHash){
           addBet({ id:selectedBetType.id, betAmount, betValue, createdAt: formatDate(Date.now()), nickname})
@@ -276,7 +284,6 @@ const BettingSection = ({nickname, addBet, ready}) => {
       setBetValue(inputValue)
     }
   };
-
 
   return (
     <>

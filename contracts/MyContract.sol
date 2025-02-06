@@ -18,6 +18,58 @@ contract MyContract {
     uint256 public winningNumber;
     bool public gameActive;
 
+    // Speicher-Array (Storage)
+    string[37] public colors;
+
+    function setColors() public {
+        string[37] memory tempColors;
+        // Dynamisches Array im Memory mit 37 Werten
+        tempColors[0] = "green";
+        tempColors[1] = "red";
+        tempColors[2] = "black";
+        tempColors[3] = "red";
+        tempColors[4] = "black";
+        tempColors[5] = "red";
+        tempColors[6] = "black";
+        tempColors[7] = "red";
+        tempColors[8] = "black";
+        tempColors[9] = "red";
+        tempColors[10] = "black";
+        tempColors[11] = "black";
+        tempColors[12] = "red";
+        tempColors[13] = "black";
+        tempColors[14] = "red";
+        tempColors[15] = "black";
+        tempColors[16] = "red";
+        tempColors[17] = "black";
+        tempColors[18] = "red";
+        tempColors[19] = "red";
+        tempColors[20] = "black";
+        tempColors[21] = "red";
+        tempColors[22] = "black";
+        tempColors[23] = "red";
+        tempColors[24] = "black";
+        tempColors[25] = "red";
+        tempColors[26] = "black";
+        tempColors[27] = "red";
+        tempColors[28] = "black";
+        tempColors[29] = "black";
+        tempColors[30] = "red";
+        tempColors[31] = "black";
+        tempColors[32] = "red";
+        tempColors[33] = "black";
+        tempColors[34] = "red";
+        tempColors[35] = "black";
+        tempColors[36] = "red";
+
+        // Array von memory nach storage übertragen
+        for (uint i = 0; i < 37; i++) {
+            colors[i] = tempColors[i];
+        }
+    }
+
+
+
     // Stores the history of balances before and after payout
     mapping(address => uint256[]) public balanceHistory; // Maps user addresses to a history of balances
 
@@ -95,48 +147,46 @@ contract MyContract {
     function distributeWinnings() private {
         for (uint256 i = 0; i < bets.length; i++) {
             address player = bets[i].player;
-
-            // Record the old balance before payout
-            uint256 oldBalance = balances[player];
-            balanceHistory[player].push(oldBalance);
-
             if (isWinningBet(bets[i])) {
-                uint256 payout = bets[i].amount * 2;
+                uint256 payout = calculatePayout(bets[i]);
                 balances[player] += payout;
                 payable(player).transfer(payout);
                 emit Payout(player, payout);
             }
-
-            // Record the new balance after payout
-            uint256 newBalance = balances[player];
-            balanceHistory[player].push(newBalance);
         }
-        delete bets;
         delete ready;
     }
 
     function isWinningBet(Bet memory _bet) private view returns (bool) {
-        if (
-            keccak256(abi.encodePacked(_bet.bet)) == keccak256(abi.encodePacked("plein")) &&
-            _bet.value == winningNumber
-        ) {
+        if (keccak256(abi.encodePacked(_bet.bet)) == keccak256(abi.encodePacked("plein")) && _bet.value == winningNumber) {
             return true;
         }
-        if (
-            keccak256(abi.encodePacked(_bet.bet)) == keccak256(abi.encodePacked("passe")) &&
-            winningNumber >= 19 &&
-            winningNumber <= 36
-        ) {
+        if (keccak256(abi.encodePacked(_bet.bet)) == keccak256(abi.encodePacked("passe")) && winningNumber >= 19 && winningNumber <= 36) {
             return true;
         }
-        if (
-            keccak256(abi.encodePacked(_bet.bet)) == keccak256(abi.encodePacked("manque")) &&
-            winningNumber >= 1 &&
-            winningNumber <= 18
-        ) {
+        if (keccak256(abi.encodePacked(_bet.bet)) == keccak256(abi.encodePacked("manque")) && winningNumber >= 1 && winningNumber <= 18) {
+            return true;
+        }
+        if (keccak256(abi.encodePacked(_bet.bet)) == keccak256(abi.encodePacked("pair")) && winningNumber % 2 == 0 && winningNumber != 0) {
+            return true;
+        }
+        if (keccak256(abi.encodePacked(_bet.bet)) == keccak256(abi.encodePacked("impair")) && winningNumber % 2 == 1) {
+            return true;
+        }
+        if (keccak256(abi.encodePacked(_bet.bet)) == keccak256(abi.encodePacked("noir")) && keccak256(abi.encodePacked(colors[winningNumber])) == keccak256(abi.encodePacked("black"))) {
+            return true;
+        }
+        if (keccak256(abi.encodePacked(_bet.bet)) == keccak256(abi.encodePacked("rouge")) && keccak256(abi.encodePacked(colors[winningNumber])) == keccak256(abi.encodePacked("red"))) {
             return true;
         }
         return false;
+    }
+
+    function calculatePayout(Bet memory _bet) private pure returns (uint256) {
+        if (keccak256(abi.encodePacked(_bet.bet)) == keccak256(abi.encodePacked("plein"))) {
+            return _bet.amount * 35;
+        }
+        return _bet.amount * 2; // Standard payout for other bet types
     }
 
     // Add a function to retrieve a player's balance history

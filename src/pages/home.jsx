@@ -27,6 +27,22 @@ const HomePage = () => {
             const contract = await getContractInstance();
             if (contract) {
                 try {
+                    const currentBets = await contract.methods.getBets().call();
+                    console.log(currentBets)
+                } catch (error) {
+                    console.error("Error reading message:", error);
+                }
+            }
+        };
+
+        loadMessage();
+    }, []);
+
+    useEffect(() => {
+        const loadMessage = async () => {
+            const contract = await getContractInstance();
+            if (contract) {
+                try {
                     // Load users
                     const currentUsers = await contract.methods.getUsers().call();
                     let current = [];
@@ -52,14 +68,6 @@ const HomePage = () => {
                     const currentWinningNumber = await contract.methods.getWinningNumber().call();
                     if (currentWinningNumber) {
                         setWinningNumber(currentWinningNumber.toString());
-                        // Load balance history (old and new)
-                        const playerAddress = window.ethereum.selectedAddress;
-                        const balanceHistoryData = await contract.methods.getBalanceHistory(playerAddress).call();
-                        const oldBalance = balanceHistoryData[0].toString() || 0; // Default to 0 if no history
-                        const newBalance = balanceHistoryData[balanceHistoryData.length - 1].toString() || oldBalance; // Default to last balance if no new balance
-                        setBalanceHistory({ oldBalance, newBalance });
-
-                        // Show the dialog
                         setShowDialog(true);
                     }
                 } catch (error) {
@@ -99,6 +107,54 @@ const HomePage = () => {
                 setReady([nickname, ...ready]);
             }
         }
+    };
+
+
+    console.log(bets, winningNumber)
+
+    const isWinning = (bets, winningNumber) => {
+        const colors = [
+            "green", "red", "black", "red", "black", "red", "black", "red", "black", "red",
+            "black", "black", "red", "black", "red", "black", "red", "black", "red", "red",
+            "black", "red", "black", "red", "black", "red", "black", "red", "black", "black",
+            "red", "black", "red", "black", "red", "black", "red"];
+
+        console.log(bets)
+
+        const winningColor = colors[winningNumber];
+        console.log(winningColor)
+        console.log(bets)
+
+
+        return bets.some(bet => {
+            if (bet.nickname === nickname) {
+                console.log(nickname, bet.id)
+                switch (bet.id) {
+                    case 'plein':
+                        return bet.number === winningNumber;
+                    case 'passe':
+                        return winningNumber >= 19 && winningNumber <= 36;
+                    case 'manque':
+                        return winningNumber >= 1 && winningNumber <= 18;
+                    case 'pair':
+                        return winningNumber % 2 === 0;
+                    case 'impair':
+                        return winningNumber % 2 !== 0;
+                    case 'noir':
+                        return winningColor === 'black' && bet.id === "noir";
+                    case 'rouge':
+                        return winningColor === 'red' && bet.id === "rouge";
+                    case '12p':
+                        return winningNumber >= 1 && winningNumber <= 12;
+                    case '12m':
+                        return winningNumber >= 13 && winningNumber <= 24;
+                    case '12d':
+                        return winningNumber >= 25 && winningNumber <= 36;
+                    default:
+                        return false;
+            }
+            }
+        });
     };
 
     return (
@@ -189,8 +245,13 @@ const HomePage = () => {
             {/* Dialog for Winning Number and Balance */}
             {showDialog && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-gray-800 rounded-xl p-8 w-96">
-                        <h3 className="text-2xl font-bold text-white mb-4">Winning Number: {winningNumber}</h3>
+                    <div className="bg-gray-800 rounded-xl p-8 w-96 text-center">
+                        <h3 className="text-2xl font-bold text-white mb-4">
+                            Winning Number: {winningNumber}
+                        </h3>
+                        <p className="text-lg font-semibold text-white">
+                            {isWinning(bets, winningNumber) ? "🎉 You won!" : "❌ You lost!"}
+                        </p>
                         <button
                             className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg"
                             onClick={() => setShowDialog(false)}
@@ -200,6 +261,7 @@ const HomePage = () => {
                     </div>
                 </div>
             )}
+
 
         </div>
     );
