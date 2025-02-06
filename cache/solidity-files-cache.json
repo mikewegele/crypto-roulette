@@ -1,43 +1,6 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/Users/mikewegele/source/fu/crypto/roulette/contracts/Roulette.sol": {
-      "lastModificationDate": 1737290569541,
-      "contentHash": "bdccb67deef20f9ff73d3a6785018a9c",
-      "sourceName": "contracts/Roulette.sol",
-      "solcConfig": {
-        "version": "0.8.19",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBase.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "SecureRoulette"
-      ]
-    },
     "/Users/mikewegele/source/fu/crypto/roulette/node_modules/@chainlink/contracts/src/v0.8/vrf/VRFConsumerBase.sol": {
       "lastModificationDate": 1737290439147,
       "contentHash": "e1c2013a779b2b576bd60d5c1ea2e592",
@@ -144,6 +107,41 @@
       ],
       "artifacts": [
         "VRFRequestIDBase"
+      ]
+    },
+    "/Users/mikewegele/source/fu/crypto/roulette/contracts/MyContract.sol": {
+      "lastModificationDate": 1738590665007,
+      "contentHash": "8e4ce08291c995eb1703754b12e8e306",
+      "sourceName": "contracts/MyContract.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "MyContract"
       ]
     }
   }
