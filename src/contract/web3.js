@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import HelloWorldArtifact from '../utils/HelloWorld.json'; // Import contract ABI
+import MyContract from '../utils/MyContract.json'; // Import contract ABI
 
 const web3 = new Web3(window.ethereum); // Use MetaMask or other provider
 
@@ -9,13 +9,14 @@ const getContractInstance = async () => {
 
     await window.ethereum.request({ method: 'eth_requestAccounts' }); // Request account access
     const networkId = await web3.eth.net.getId();  //Get network ID
-    const deployedNetwork = HelloWorldArtifact.networks[networkId]; //Use network ID to get correct deployment
+    console.log(networkId);
+    const deployedNetwork = MyContract.networks[networkId]; //Use network ID to get correct deployment
 
 
 
     if (deployedNetwork) {
       const contract = new web3.eth.Contract(
-        HelloWorldArtifact.abi,
+          MyContract.abi,
         deployedNetwork.address
       );
       return contract;
