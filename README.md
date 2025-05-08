@@ -4,8 +4,6 @@
 
 - [Node.js](https://nodejs.org/)
 - [MetaMask browser extension](https://metamask.io/)
-- [Ganache](https://trufflesuite.com/ganache/)
-- [Truffle](https://trufflesuite.com/)
 
 ---
 
